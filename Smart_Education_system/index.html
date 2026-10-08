@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Education Portal — Login</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="logo">🎓</div>
+    <h1>Smart Education Portal</h1>
+    <p class="tagline">Know early. Speak fearlessly.</p>
+
+    <input type="email" id="email" placeholder="Email (e.g. student1@demo.com)">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn" class="btn-primary">Log in</button>
+    <p id="login-error" class="error"></p>
+
+    <p class="hint">
+      Demo accounts: student1@demo.com … student10@demo.com<br>
+      faculty1@demo.com • hod1@demo.com • counselor1@demo.com<br>
+      Password for all: <b>demo1234</b>
+    </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  document.getElementById("login-btn").addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const err = document.getElementById("login-error");
+    err.textContent = "";
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      err.textContent = "Login failed: " + error.message;
+      return;
+    }
+    await redirectByRole();   // from auth.js
+  });
+  document.getElementById("password").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("login-btn").click();
+  });
+</script>
+</body>
+</html>
