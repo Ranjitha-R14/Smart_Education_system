@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Dashboard | Smart Education Portal</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../images/icon-192.png">
+</head>
+<body>
+<aside class="dash-sidebar">
+  <div class="dash-brand">
+    <span class="dash-brand-logo">🎓</span>
+    <div><b>Smart Education</b><span>Portal</span></div>
+  </div>
+  <div class="dash-side-tag">Know early. Speak fearlessly.</div>
+  <nav class="dash-nav" aria-label="Student pages">
+    <a href="dashboard.html" class="active">🏠 Dashboard</a>
+    <a href="attendance.html">📊 Attendance</a>
+    <a href="events.html">🎪 Events Hub</a>
+    <a href="doubts.html">✋ My Doubts</a>
+    <a href="counseling.html">💬 Counselor</a>
+    <a href="password.html">🔐 Password</a>
+  </nav>
+  <div class="dash-side-user">
+    <div id="side-name">Student</div>
+    <div class="dash-side-class" id="side-class">Student</div>
+    <button type="button" class="dash-logout" onclick="logout()">Log out</button>
+  </div>
+</aside>
+
+<main class="dashboard-main">
+  <h1 class="dash-greet" id="greet">Welcome 👋</h1>
+  <p class="dash-date" id="today"></p>
+
+  <div id="attAlert"></div>
+
+  <div class="dash-kpi-row">
+    <section class="dash-kpi dash-kpi-green">
+      <div class="dash-kpi-icon">📊</div>
+      <div class="dash-kpi-num" id="kpi-att">–</div>
+      <div class="dash-kpi-label">My Attendance</div>
+    </section>
+
+    <section class="dash-kpi dash-kpi-yellow">
+      <div class="dash-kpi-icon">⏰</div>
+      <div class="dash-kpi-num" id="kpi-abs">–</div>
+      <div class="dash-kpi-label">Absences You Can Afford</div>
+    </section>
+
+    <section class="dash-kpi dash-kpi-white">
+      <div class="dash-kpi-icon">🎪</div>
+      <div class="dash-kpi-num" id="kpi-events">–</div>
+      <div class="dash-kpi-label">Events Available</div>
+    </section>
+
+    <section class="dash-kpi dash-kpi-white">
+      <div class="dash-kpi-icon">📢</div>
+      <div class="dash-kpi-num" id="kpi-notes">–</div>
+      <div class="dash-kpi-label">Faculty Notes</div>
+    </section>
+  </div>
+
+  <div class="dash-grid-charts">
+    <section class="dash-card">
+      <h3>Attendance Overview <span class="dash-muted">— attended vs absent classes</span></h3>
+      <div class="attendance-visual">
+        <div class="attendance-bar-wrap">
+          <div class="attendance-bar" id="attendance-bar"></div>
+        </div>
+        <div class="attendance-bar-labels">
+          <span><i class="dash-dot dash-dot-present"></i> Present <b id="bar-present">–</b></span>
+          <span><i class="dash-dot dash-dot-absent"></i> Absent <b id="bar-absent">–</b></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-card">
+      <h3>Present vs Absent</h3>
+      <div class="dash-donut-wrap">
+        <div class="dash-donut" id="donut">
+          <div class="dash-donut-hole">
+            <b id="donut-pct">–</b>
+            <span>present</span>
+          </div>
+        </div>
+        <div class="dash-legend">
+          <div><i class="dash-dot dash-dot-present"></i> Present <b id="lg-p">–</b></div>
+          <div><i class="dash-dot dash-dot-absent"></i> Absent <b id="lg-a">–</b></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="dash-grid-2">
+    <section class="dash-card">
+      <h3>🎪 Upcoming Events <span class="dash-muted">— apply directly</span></h3>
+      <div id="events-list"></div>
+    </section>
+
+    <section class="dash-card">
+      <h3>📢 Faculty Notes</h3>
+      <div id="notes-list"></div>
+    </section>
+  </div>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+  const user = requireRole("student");
+
+  function renderDashboard() {
+    if (!user) return;
+
+    const data = loadData();
+    const me = myRecord(user);
+    const pct = attendancePct(me);
+    const absent = Math.max(0, me.total - me.attended);
+    const level = attendanceLevel(me);
+
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    document.getElementById("greet").textContent = `${greeting}, ${user.name} 👋`;
+    document.getElementById("side-name").textContent = user.name;
+    document.getElementById("side-class").textContent = user.id;
+    document.getElementById("today").textContent =
+      new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+    // Attendance warning — uses the same 85% rule as the rest of the portal.
+    const alertBox = document.getElementById("attAlert");
+    if (level === "danger") {
+      const n = classesNeeded(me);
+      alertBox.innerHTML = canRecover(me)
+        ? `<div class="dash-alert dash-alert-danger">
+             <strong>Attendance shortage: ${pct.toFixed(1)}%</strong>
+             <span>Attend the next ${n} class${n === 1 ? "" : "es"} without missing any to reach ${REQUIRED_ATTENDANCE}%.</span>
+           </div>`
+        : `<div class="dash-alert dash-alert-danger">
+             <strong>Attendance shortage: ${pct.toFixed(1)}%</strong>
+             <span>Even attending every remaining class would only reach ${bestPossiblePct(me).toFixed(1)}%. Please contact your counselor or HOD.</span>
+           </div>`;
+    } else if (level === "warn") {
+      const m = classesCanMiss(me);
+      alertBox.innerHTML = `<div class="dash-alert dash-alert-warn">
+        <strong>Close to the attendance limit: ${pct.toFixed(1)}%</strong>
+        <span>You can miss only ${m} more class${m === 1 ? "" : "es"} before falling below ${REQUIRED_ATTENDANCE}%.</span>
+      </div>`;
+    } else {
+      alertBox.innerHTML = "";
+    }
+
+    document.getElementById("kpi-att").textContent = `${pct.toFixed(1)}%`;
+
+    const afford = classesCanMiss(me);
+    const absEl = document.getElementById("kpi-abs");
+    absEl.textContent = afford;
+    absEl.classList.toggle("dash-danger-number", pct < REQUIRED_ATTENDANCE);
+
+    const upcoming = data.events
+      .filter(e => e.date >= new Date().toISOString().slice(0, 10))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const notes = [...data.announcements]
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+    document.getElementById("kpi-events").textContent = upcoming.length;
+    document.getElementById("kpi-notes").textContent = notes.length;
+
+    // Attendance visuals
+    const presentPct = me.total ? Math.max(0, Math.min(100, pct)) : 0;
+    document.getElementById("attendance-bar").style.width = `${presentPct}%`;
+    document.getElementById("bar-present").textContent = me.attended;
+    document.getElementById("bar-absent").textContent = absent;
+
+    const donut = document.getElementById("donut");
+    donut.style.background = `conic-gradient(#76b043 0 ${presentPct}%, #ffd66b ${presentPct}% 100%)`;
+    document.getElementById("donut-pct").textContent = `${pct.toFixed(1)}%`;
+    document.getElementById("lg-p").textContent = me.attended;
+    document.getElementById("lg-a").textContent = absent;
+
+    // Events
+    document.getElementById("events-list").innerHTML = upcoming.length
+      ? upcoming.slice(0, 5).map(e => {
+          const link = safeUrl(e.link);
+          return `<div class="dash-event-row">
+            <div>
+              <div class="dash-event-title">${escapeHTML(e.title)}</div>
+              <div class="dash-event-meta">${formatDate(e.date)}${e.details ? ` · ${escapeHTML(e.details)}` : ""}</div>
+            </div>
+            ${link ? `<a class="dash-btn-apply" href="${escapeHTML(link)}" target="_blank" rel="noopener">Apply Now</a>` : `<a class="dash-btn-apply" href="events.html">View</a>`}
+          </div>`;
+        }).join("")
+      : `<p class="dash-empty">No upcoming events.</p>`;
+
+    // Faculty notes / announcements
+    document.getElementById("notes-list").innerHTML = notes.length
+      ? notes.slice(0, 5).map(a => `
+          <div class="dash-note-item">
+            <div class="dash-note-head">
+              <div class="dash-note-title">${escapeHTML(a.title)}</div>
+              <span class="dash-tag">${escapeHTML(a.category || "Notice")}</span>
+            </div>
+            <div class="dash-note-body">${escapeHTML(a.message)}</div>
+            <div class="dash-note-date">${formatDate(a.date)}</div>
+          </div>
+        `).join("")
+      : `<p class="dash-empty">No faculty notes yet.</p>`;
+  }
+
+  if (user) {
+    renderDashboard();
+    onDataChange(renderDashboard);
+  }
+</script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

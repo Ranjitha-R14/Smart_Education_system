@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask a doubt | Smart Education Portal</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../images/icon-192.png">
+</head>
+<body>
+<div id="shell"></div>
+<main class="page">
+  <h1>Ask a doubt anonymously</h1>
+  <p class="lead">Pick the topic you didn't understand. Your teacher sees how many students are stuck on each topic, never who.</p>
+
+  <section class="panel">
+    <form id="doubtForm">
+      <label for="subject">Subject</label>
+      <select id="subject"></select>
+
+      <label for="topic">Topic</label>
+      <select id="topic"></select>
+
+      <label for="doubt">What was unclear? <span class="muted">(optional)</span></label>
+      <textarea id="doubt" maxlength="500" placeholder="Example: I didn't follow how the ROC is found from the poles."></textarea>
+      <p class="muted">Don't write your name or register number here if you want to stay anonymous.</p>
+
+      <button class="btn" type="submit" style="margin-top:16px">I didn't understand this</button>
+      <p id="doubtMessage" class="status" role="status"></p>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Recently re-taught</h2>
+    <div id="retaught"></div>
+  </section>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+  const user = requireRole("student");
+  const subjectSel = document.getElementById("subject");
+  const topicSel = document.getElementById("topic");
+  const FLAG_KEY = "sep-flagged"; // remembers topics flagged in this tab only, so one student can't spam a count
+
+  subjectSel.innerHTML = Object.keys(SUBJECTS).map(s => `<option>${escapeHTML(s)}</option>`).join("");
+  function fillTopics() {
+    topicSel.innerHTML = SUBJECTS[subjectSel.value].map(t => `<option>${escapeHTML(t)}</option>`).join("");
+  }
+  subjectSel.addEventListener("change", fillTopics);
+  fillTopics();
+
+  function flagged() {
+    try { return JSON.parse(sessionStorage.getItem(FLAG_KEY)) || []; } catch (e) { return []; }
+  }
+
+  document.getElementById("doubtForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("doubtMessage");
+    const key = subjectSel.value + "|" + topicSel.value;
+    if (flagged().includes(key)) {
+      msg.className = "status err";
+      msg.textContent = `You've already flagged ${topicSel.value}. Your teacher has it.`;
+      return;
+    }
+    // Note: no name or register number is saved with the doubt.
+    updateData(d => d.doubts.push({
+      id: newId(), subject: subjectSel.value, topic: topicSel.value,
+      text: document.getElementById("doubt").value.trim(), date: new Date().toISOString()
+    }));
+    try { sessionStorage.setItem(FLAG_KEY, JSON.stringify([...flagged(), key])); } catch (err) {}
+    document.getElementById("doubt").value = "";
+    msg.className = "status ok";
+    msg.textContent = `Sent anonymously. Your teacher will see one more student stuck on ${topicSel.value}.`;
+  });
+
+  function renderRetaught() {
+    const list = loadData().retaught.slice(-5).reverse();
+    document.getElementById("retaught").innerHTML = list.length
+      ? list.map(r => `<div class="item"><h3>${escapeHTML(r.topic)}</h3>
+          <p>${escapeHTML(r.subject)}: re-taught on ${formatDate(r.date)} after ${r.count} students flagged it.</p></div>`).join("")
+      : `<p class="empty">When your teacher re-teaches a flagged topic, it shows up here.</p>`;
+  }
+
+  if (user) { renderStudentShell(user, "doubts"); renderRetaught(); onDataChange(renderRetaught); }
+</script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

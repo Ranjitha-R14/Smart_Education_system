@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attendance | Smart Education Portal</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../images/icon-192.png">
+</head>
+<body>
+<div id="shell"></div>
+<main class="page">
+  <h1>Attendance</h1>
+  <p class="lead" id="lead"></p>
+
+  <section class="panel">
+    <div class="big-pct" id="pct">–</div>
+    <div class="meter" aria-hidden="true">
+      <div class="meter-fill" id="fill"></div>
+      <div class="meter-mark" id="mark" title="Required"></div>
+    </div>
+    <p class="muted" id="markLabel"></p>
+    <div class="stats">
+      <div class="stat"><b id="total">–</b><span class="muted">Classes held</span></div>
+      <div class="stat"><b id="attended">–</b><span class="muted">Attended</span></div>
+      <div class="stat"><b id="absent">–</b><span class="muted">Missed</span></div>
+    </div>
+  </section>
+
+  <div id="advice"></div>
+
+  <section class="panel">
+    <h2>Plan ahead</h2>
+    <p class="muted">See what happens to your percentage if you attend or miss upcoming classes.</p>
+    <label for="plan">Upcoming classes</label>
+    <input id="plan" type="range" min="0" max="20" value="5">
+    <p id="planOut" class="status"></p>
+  </section>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+  const user = requireRole("student");
+
+  function render() {
+    const me = myRecord(user);
+    const pct = attendancePct(me);
+    const level = attendanceLevel(me);
+
+    document.getElementById("lead").textContent =
+      `${CLASS_NAME}. You need at least ${REQUIRED_ATTENDANCE}% attendance to be eligible for exams.`;
+    const pctEl = document.getElementById("pct");
+    pctEl.textContent = pct.toFixed(1) + "%";
+    pctEl.className = "big-pct " + level;
+
+    const fill = document.getElementById("fill");
+    fill.style.width = Math.min(100, pct) + "%";
+    fill.className = "meter-fill " + level;
+    document.getElementById("mark").style.left = REQUIRED_ATTENDANCE + "%";
+    document.getElementById("markLabel").textContent = `The black line marks the ${REQUIRED_ATTENDANCE}% requirement.`;
+
+    document.getElementById("total").textContent = me.total;
+    document.getElementById("attended").textContent = me.attended;
+    document.getElementById("absent").textContent = me.total - me.attended;
+
+    const advice = document.getElementById("advice");
+    if (level === "danger") {
+      const n = classesNeeded(me);
+      if (canRecover(me)) {
+        advice.innerHTML = `<div class="alert danger" role="alert"><strong>Attendance shortage</strong>
+          <p>You need to attend the next <b>${n}</b> class${n === 1 ? "" : "es"} in a row to reach ${REQUIRED_ATTENDANCE}%.
+          About ${classesLeft(me)} classes are left this semester. Talk to your counselor if something is stopping you from attending.</p></div>`;
+      } else {
+        advice.innerHTML = `<div class="alert danger" role="alert"><strong>Attendance shortage</strong>
+          <p>Even if you attend all ${classesLeft(me)} remaining classes you would reach ${bestPossiblePct(me).toFixed(1)}%, below ${REQUIRED_ATTENDANCE}%.
+          Please meet your counselor or HOD now to ask about the college's condonation process.</p></div>`;
+      }
+    } else {
+      const m = classesCanMiss(me);
+      advice.innerHTML = `<div class="alert ${level}"><strong>${level === "warn" ? "Close to the limit" : "You're on track"}</strong>
+        <p>You can miss at most <b>${m}</b> more class${m === 1 ? "" : "es"} and still stay at or above ${REQUIRED_ATTENDANCE}%.</p></div>`;
+    }
+    updatePlan();
+  }
+
+  function updatePlan() {
+    const me = myRecord(user);
+    const k = Number(document.getElementById("plan").value);
+    const ifAttend = attendancePct({ attended: me.attended + k, total: me.total + k });
+    const ifMiss = attendancePct({ attended: me.attended, total: me.total + k });
+    document.getElementById("planOut").textContent =
+      `Next ${k} class${k === 1 ? "" : "es"}: attend all and you'll be at ${ifAttend.toFixed(1)}%, miss all and you'll drop to ${ifMiss.toFixed(1)}%.`;
+  }
+  document.getElementById("plan").addEventListener("input", updatePlan);
+
+  if (user) { renderStudentShell(user, "attendance"); render(); onDataChange(render); }
+</script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

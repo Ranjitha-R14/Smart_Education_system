@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Education Portal - Faculty</title>
+  <meta name="description" content="Smart Education Portal Faculty Dashboard for Attendance, Doubts, Announcements, and Accreditation." />
+  <meta property="og:title" content="Smart Education Portal - Faculty" />
+  <meta property="og:description" content="Smart Education Portal Faculty Dashboard for Attendance, Doubts, Announcements, and Accreditation." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    /* =========================================================
+       RESET & BASE STYLES
+       ========================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary-blue: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --primary-hover: #1e40af;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --bg-light: #f8fafc;
+      --white: #ffffff;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      
+      /* Status Colors */
+      --green-bg: #f0fdf4;
+      --green-border: #bbf7d0;
+      --green-text: #15803d;
+      --green-badge-bg: #dcfce7;
+      --green-badge-text: #166534;
+
+      --orange-bg: #fff7ed;
+      --orange-border: #fed7aa;
+      --orange-text: #c2410c;
+      --orange-badge-bg: #ffedd5;
+      --orange-badge-text: #9a3412;
+
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --red-text: #b91c1c;
+      --red-badge-bg: #fee2e2;
+      --red-badge-text: #991b1b;
+
+      --sidebar-width: 250px;
+      --topbar-height: 64px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--slate-900);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================================
+       TOP BAR
+       ========================================================= */
+    .topbar {
+      height: var(--topbar-height);
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-icon {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--white);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .faculty-info {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: var(--white);
+      text-decoration: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.15s ease-in-out;
+      white-space: nowrap;
+    }
+
+    .logout-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--white);
+    }
+
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+
+    /* =========================================================
+       DASHBOARD WRAPPER & SIDEBAR
+       ========================================================= */
+    .dashboard-container {
+      display: flex;
+      flex: 1;
+      width: 100%;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--white);
+      border-right: 1px solid var(--slate-200);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding: 1.25rem 0.75rem;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      list-style: none;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: 1px solid transparent;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--slate-700);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .nav-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--slate-600);
+      transition: stroke 0.15s;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--slate-100);
+      color: var(--primary-blue);
+    }
+
+    .nav-btn:hover svg {
+      stroke: var(--primary-blue);
+    }
+
+    .nav-btn.active {
+      background-color: var(--primary-light);
+      color: var(--primary-blue);
+      border-color: var(--primary-border);
+      font-weight: 600;
+    }
+
+    .nav-btn.active svg {
+      stroke: var(--primary-blue);
+    }
+
+    /* =========================================================
+       MAIN CONTENT CONTAINER
+       ========================================================= */
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      background-color: var(--bg-light);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 0.875rem;
+      color: var(--slate-600);
+      margin-top: 0.25rem;
+    }
+
+    /* Notice banner */
+    .notice-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: #1e40af;
+      margin-bottom: 1.5rem;
+    }
+
+    .notice-banner svg {
+      width: 20px;
+      height: 20px;
+      stroke: #1d4ed8;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       SUMMARY CARDS (ATTENDANCE)
+       ========================================================= */
+    .summary-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background-color: var(--slate-300);
+    }
+
+    .summary-card.card-total::before {
+      background-color: var(--primary-blue);
+    }
+
+    .summary-card.card-regular::before {
+      background-color: #16a34a;
+    }
+
+    .summary-card.card-irregular::before {
+      background-color: #dc2626;
+    }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--slate-600);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      line-height: 1.2;
+      margin-top: 0.25rem;
+    }
+
+    .card-subtext {
+      font-size: 0.75rem;
+      color: var(--slate-600);
+      margin-top: 0.25rem;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .card-total .card-icon {
+      background-color: var(--primary-light);
+      stroke: var(--primary-blue);
+    }
+
+    .card-regular .card-icon {
+      background-color: var(--green-badge-bg);
+      stroke: #16a34a;
+    }
+
+    .card-irregular .card-icon {
+      background-color: var(--red-badge-bg);
+      stroke: #dc2626;
+    }
+
+    /* =========================================================
+       TABLE STYLES
+       ========================================================= */
+    .table-container {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .table-header-box {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .table-header-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--slate-900);
+    }
+
+    .table-criterion {
+      font-size: 0.8125rem;
+      color: var(--slate-600);
+      background-color: var(--slate-100);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid var(--slate-200);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .attendance-table th {
+      background-color: #f1f5f9;
+      color: var(--slate-700);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .attendance-table td {
+      padding: 1rem 1.25rem;
+      font-size: 0.9375rem;
+      border-bottom: 1px solid var(--slate-200);
+      vertical-align: middle;
+    }
+
+    .attendance-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .attendance-table tbody tr.row-regular {
+      background-color: var(--green-bg);
+      color: var(--slate-900);
+    }
+
+    .attendance-table tbody tr.row-regular td {
+      border-bottom-color: var(--green-border);
+    }
+
+    .attendance-table tbody tr.row-irregular {
+      background-color: var(--red-bg);
+      color: var(--slate-900);
+    }
+
+    .attendance-table tbody tr.row-irregular td {
+      border-bottom-color: var(--red-border);
+    }
+
+    .reg-cell {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .row-regular .reg-cell {
+      color: #14532d;
+    }
+
+    .row-irregular .reg-cell {
+      color: #7f1d1d;
+    }
+
+    .name-cell {
+      font-weight: 600;
+    }
+
+    .pct-cell-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pct-number {
+      font-weight: 700;
+      min-width: 45px;
+    }
+
+    .row-regular .pct-number {
+      color: var(--green-text);
+    }
+
+    .row-irregular .pct-number {
+      color: var(--red-text);
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      max-width: 140px;
+      height: 7px;
+      background-color: rgba(0, 0, 0, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+    }
+
+    .row-regular .progress-bar-fill {
+      background-color: #16a34a;
+    }
+
+    .row-irregular .progress-bar-fill {
+      background-color: #dc2626;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .status-badge.regular {
+      background-color: var(--green-badge-bg);
+      color: var(--green-badge-text);
+      border: 1px solid var(--green-border);
+    }
+
+    .status-badge.regular .badge-dot {
+      background-color: #16a34a;
+    }
+
+    .status-badge.irregular {
+      background-color: var(--red-badge-bg);
+      color: var(--red-badge-text);
+      border: 1px solid var(--red-border);
+    }
+
+    .status-badge.irregular .badge-dot {
+      background-color: #dc2626;
+    }
+
+    /* =========================================================
+       PAGE 1: DOUBTS PAGE STYLES
+       ========================================================= */
+    .doubts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .doubt-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .doubt-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .doubt-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 0.75rem;
+    }
+
+    .doubt-topic-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      line-height: 1.3;
+    }
+
+    .doubt-count-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .doubt-count-number {
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .doubt-count-label {
+      font-size: 0.75rem;
+      color: var(--slate-500);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .doubt-tag-warning {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      align-self: flex-start;
+      background-color: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .doubt-bar-wrapper {
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+
+    .doubt-bar-bg {
+      width: 100%;
+      height: 10px;
+      background-color: var(--slate-100);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .doubt-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Doubts Color Classes */
+    .doubt-card.level-red {
+      border-color: #fecaca;
+      background: linear-gradient(180deg, #ffffff 70%, #fef2f2 100%);
+    }
+    .doubt-card.level-red .doubt-count-number {
+      color: #dc2626;
+    }
+    .doubt-card.level-red .doubt-bar-fill {
+      background: linear-gradient(90deg, #f87171, #dc2626);
+    }
+
+    .doubt-card.level-orange {
+      border-color: #fed7aa;
+      background: linear-gradient(180deg, #ffffff 70%, #fff7ed 100%);
+    }
+    .doubt-card.level-orange .doubt-count-number {
+      color: #ea580c;
+    }
+    .doubt-card.level-orange .doubt-bar-fill {
+      background: linear-gradient(90deg, #fb923c, #ea580c);
+    }
+
+    .doubt-card.level-green {
+      border-color: #bbf7d0;
+      background: linear-gradient(180deg, #ffffff 70%, #f0fdf4 100%);
+    }
+    .doubt-card.level-green .doubt-count-number {
+      color: #16a34a;
+    }
+    .doubt-card.level-green .doubt-bar-fill {
+      background: linear-gradient(90deg, #4ade80, #16a34a);
+    }
+
+    /* =========================================================
+       PAGE 2: ANNOUNCEMENTS PAGE STYLES
+       ========================================================= */
+    .announcement-form-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--slate-300);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      color: var(--slate-900);
+      background-color: var(--white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+    }
+
+    textarea.form-control {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .form-note {
+      font-size: 0.8125rem;
+      color: var(--slate-500);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1.4rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .announcements-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .announcement-item {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-left: 4px solid var(--primary-blue);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .announcement-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .announcement-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .announcement-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .announcement-date {
+      font-size: 0.8125rem;
+      color: var(--slate-500);
+    }
+
+    .announcement-body {
+      font-size: 0.9375rem;
+      color: var(--slate-700);
+      white-space: pre-wrap;
+    }
+
+    .announcement-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+      color: var(--primary-blue);
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+
+    .announcement-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Category Badges */
+    .cat-badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .cat-event {
+      background-color: #ede9fe;
+      color: #6d28d9;
+      border: 1px solid #ddd6fe;
+    }
+
+    .cat-notes {
+      background-color: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .cat-exam {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .cat-general {
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* =========================================================
+       PAGE 3: ACCREDITATION PAGE STYLES
+       ========================================================= */
+    .accred-form-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .accred-form-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.25fr 1.75fr;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    .accred-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      white-space: nowrap;
+    }
+
+    .filter-select {
+      padding: 0.5rem 0.85rem;
+      border: 1px solid var(--slate-300);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      background-color: var(--white);
+      color: var(--slate-800);
+    }
+
+    .btn-generate-report {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 2px 6px rgba(29, 78, 216, 0.25);
+      transition: all 0.15s ease;
+    }
+
+    .btn-generate-report:hover {
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-delete {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.15s;
+    }
+
+    .btn-delete:hover {
+      background-color: #dc2626;
+      color: var(--white);
+      border-color: #dc2626;
+    }
+
+    .type-pill {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      background-color: var(--slate-100);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+    }
+
+    .crit-pill {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--primary-blue);
+    }
+
+    /* =========================================================
+       REPORT MODAL POPUP STYLES
+       ========================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 200;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f8fafc;
+    }
+
+    .modal-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--slate-500);
+      padding: 0.25rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-close-modal:hover {
+      background-color: var(--slate-200);
+      color: var(--slate-800);
+    }
+
+    .modal-body {
+      padding: 1.75rem;
+    }
+
+    .report-paper {
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 1.75rem;
+      background: var(--white);
+    }
+
+    .report-top-header {
+      text-align: center;
+      border-bottom: 2px solid var(--slate-900);
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .report-college {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .report-title-doc {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      margin-top: 0.25rem;
+    }
+
+    .report-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--slate-200);
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    .report-meta-item strong {
+      color: var(--slate-900);
+    }
+
+    .report-criterion-section {
+      margin-top: 1.75rem;
+    }
+
+    .report-criterion-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      background-color: #f1f5f9;
+      border-left: 4px solid var(--primary-blue);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 0.75rem;
+    }
+
+    .report-count-tag {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      background-color: var(--white);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--slate-300);
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .report-table th, .report-table td {
+      border: 1px solid var(--slate-300);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+
+    .report-table th {
+      background-color: #f8fafc;
+      font-weight: 700;
+    }
+
+    .report-table td.center {
+      text-align: center;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.75rem;
+      border-top: 1px solid var(--slate-200);
+      background-color: #f8fafc;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .btn-secondary {
+      background-color: var(--white);
+      border: 1px solid var(--slate-300);
+      color: var(--slate-700);
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--slate-100);
+    }
+
+    /* =========================================================
+       PRINT STYLES FOR PDF / PRINT
+       ========================================================= */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal-overlay, .modal-card, .report-paper, .report-paper * {
+        visibility: visible;
+      }
+      .modal-overlay {
+        position: static;
+        background: none;
+        padding: 0;
+        display: block !important;
+      }
+      .modal-card {
+        box-shadow: none;
+        max-width: 100%;
+        max-height: none;
+        overflow: visible;
+      }
+      .modal-header, .modal-footer {
+        display: none !important;
+      }
+      .modal-body {
+        padding: 0;
+      }
+      .report-paper {
+        border: none;
+        padding: 0;
+      }
+    }
+
+    /* =========================================================
+       RESPONSIVE DESIGN (PHONES & TABLETS)
+       ========================================================= */
+    @media (max-width: 768px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 0.875rem 1rem;
+        gap: 0.65rem;
+      }
+
+      .topbar-right {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .faculty-info {
+        font-size: 0.8125rem;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .logout-btn {
+        font-size: 0.8125rem;
+        padding: 0.35rem 0.75rem;
+      }
+
+      .dashboard-container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--slate-200);
+        padding: 0.5rem 0.75rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.35rem;
+        padding-bottom: 0.25rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        justify-content: center;
+      }
+
+      .main-content {
+        padding: 1.25rem 1rem;
+      }
+
+      .summary-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
+      }
+
+      .card-value {
+        font-size: 1.875rem;
+      }
+
+      .attendance-table th, 
+      .attendance-table td {
+        padding: 0.75rem 0.875rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .accred-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .accred-actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-generate-report {
+        justify-content: center;
+      }
+
+      .filter-wrapper {
+        justify-content: space-between;
+      }
+
+      .report-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== Added: shared-data features (mark attendance, notes, counseling, badges) ===== */
+    .nav-badge { margin-left: auto; background: var(--red-text); color: #fff; font-size: 0.75rem; font-weight: 700;
+      min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; }
+    .nav-badge[hidden] { display: none; }
+    .sidebar-foot { margin-top: auto; padding: 1rem 0.25rem 0; border-top: 1px solid var(--slate-200); }
+    .sidebar-foot button { width: 100%; background: none; border: 1px dashed var(--slate-300); color: var(--slate-600);
+      padding: 0.55rem; border-radius: 8px; font: inherit; font-size: 0.85rem; cursor: pointer; }
+    .sidebar-foot button:hover { background: var(--slate-100); }
+    .sidebar > nav { display: flex; flex-direction: column; flex: 1; }
+    .mark-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .mark-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.5rem; margin: 0.75rem 0 1rem; }
+    .mark-row { display: grid; grid-template-columns: auto auto 1fr; gap: 0.6rem; align-items: center; padding: 0.6rem 0.75rem;
+      border: 1px solid var(--slate-200); border-radius: 8px; cursor: pointer; font-size: 0.92rem; }
+    .mark-row:has(input:not(:checked)) { background: var(--red-bg); border-color: var(--red-border); }
+    .mark-row input { width: 18px; height: 18px; }
+    .form-hint { color: var(--slate-500); font-size: 0.9rem; }
+    .need-cell { color: var(--slate-600); font-size: 0.88rem; white-space: nowrap; }
+    .row-irregular .need-cell { color: var(--red-text); font-weight: 600; }
+    .doubts-grid { align-items: start; }
+    .db-table td { font-size: 0.85rem; word-break: break-word; }
+    #main-content { min-width: 0; }
+    .doubt-subject { font-size: 0.8rem; color: var(--slate-500); }
+    .doubt-notes { list-style: none; margin: 0.75rem 0; display: grid; gap: 0.4rem; }
+    .doubt-notes li { font-size: 0.85rem; color: var(--slate-700); background: var(--slate-50); border-left: 3px solid var(--slate-300);
+      padding: 0.4rem 0.6rem; border-radius: 0 6px 6px 0; }
+    .btn-small { padding: 0.4rem 0.8rem !important; font-size: 0.85rem !important; margin-top: 0.5rem; }
+    .retaught-log { margin: 0.75rem 0 0 1.1rem; display: grid; gap: 0.35rem; color: var(--slate-700); font-size: 0.92rem; }
+    .empty-note { color: var(--slate-500); padding: 1.5rem; background: var(--white); border: 1px dashed var(--slate-300); border-radius: 10px; }
+    .empty-cell { text-align: center; padding: 2rem !important; color: var(--slate-500); }
+    .muted-inline { font-weight: 500; color: var(--slate-500); font-size: 0.85rem; }
+    .announcement-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
+    .counsel-form { margin-top: 0.75rem; }
+    .counsel-reply { margin-top: 0.75rem; padding: 0.6rem 0.9rem; border-left: 3px solid var(--green-text);
+      background: var(--green-bg); border-radius: 0 8px 8px 0; font-size: 0.92rem; }
+    @media (max-width: 768px) { .sidebar-foot { display: none; } }
+  
+    /* Phone fix: let the name pill wrap so the top bar never causes sideways scrolling */
+    .topbar-right { min-width: 0; flex-wrap: wrap; }
+    .faculty-info { white-space: normal; min-width: 0; max-width: 100%; border-radius: 14px; }
+  </style>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../images/icon-192.png">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand-section">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+      </div>
+      <span>Smart Education Portal - Faculty</span>
+    </div>
+    <div class="topbar-right">
+      <div class="faculty-info" id="faculty-info"></div>
+      <a href="../index.html" class="logout-btn" onclick="event.preventDefault(); logout();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Logout</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- DASHBOARD CONTAINER -->
+  <div class="dashboard-container">
+    
+    <!-- LEFT SIDEBAR (BECOMES TOP MENU ON PHONES) -->
+    <aside class="sidebar">
+      <nav aria-label="Main Navigation">
+        <ul class="sidebar-nav">
+          <li>
+            <button class="nav-btn" id="btn-attendance" onclick="showPage('attendance')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+                <path d="m9 16 2 2 4-4"/>
+              </svg>
+              <span>Attendance</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" id="btn-doubts" onclick="showPage('doubts')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Doubts</span>
+              <span class="nav-badge" id="badge-doubts" hidden title="Topics needing re-teaching"></span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" id="btn-counseling" onclick="showPage('counseling')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/>
+              </svg>
+              <span>Counseling</span>
+              <span class="nav-badge" id="badge-counseling" hidden title="Unanswered messages"></span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" id="btn-announcements" onclick="showPage('announcements')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 11 18-5v12L3 14v-3z"/>
+                <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
+              </svg>
+              <span>Announcements</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" id="btn-accreditation" onclick="showPage('accreditation')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+              <span>Accreditation</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" id="btn-password" onclick="showPage('password')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+              </svg>
+              <span>Change password</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" id="btn-database" onclick="showPage('database')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>
+              </svg>
+              <span>Database</span>
+            </button>
+          </li>
+        </ul>
+        <div class="sidebar-foot">
+          <button type="button" onclick="handleResetDemo()">Reset demo data</button>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT VIEW -->
+    <main class="main-content" id="main-content">
+      <!-- Injected via JavaScript -->
+    </main>
+  </div>
+
+  <!-- NAAC / NBA REPORT MODAL POPUP -->
+  <div class="modal-overlay" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">NAAC / NBA Accreditation Audit Report</h3>
+        <button class="btn-close-modal" onclick="closeReportModal()" title="Close report">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="report-modal-content">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeReportModal()">Close</button>
+        <button type="button" class="btn-primary" onclick="window.print()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Print / Save as PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="../js/app.js"></script>
+  <script>
+    // =========================================================================
+    // FACULTY DASHBOARD — data now comes from ../js/app.js (shared with students)
+    // =========================================================================
+    const user = requireRole("faculty");
+    const MY_SUBJECT = (user && user.subject) || FACULTY_SUBJECT;  // each faculty sees their own subject first
+
+    let currentPage = 'attendance';
+    let currentCriterionFilter = 'All';
+    let doubtSubject = MY_SUBJECT;
+    let markingOpen = false;
+
+    const PAGES = ['attendance', 'doubts', 'counseling', 'announcements', 'accreditation', 'database', 'password'];
+
+    function showPage(pageId) {
+      if (!PAGES.includes(pageId)) pageId = 'attendance';
+      if (pageId === 'counseling' && !(user && user.counselor)) pageId = 'attendance';   // inbox is for the class counselor only
+      currentPage = pageId;
+      PAGES.forEach(p => {
+        const btn = document.getElementById(`btn-${p}`);
+        if (btn) {
+          btn.classList.toggle('active', p === pageId);
+          if (p === pageId) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+        }
+      });
+      const container = document.getElementById('main-content');
+      if (pageId === 'attendance') renderAttendancePage(container);
+      else if (pageId === 'doubts') renderDoubtsPage(container);
+      else if (pageId === 'counseling') renderCounselingPage(container);
+      else if (pageId === 'announcements') renderAnnouncementsPage(container);
+      else if (pageId === 'accreditation') renderAccreditationPage(container);
+      else if (pageId === 'database') renderDatabasePage(container);
+      else if (pageId === 'password') renderPasswordPage(container);
+      updateBadges();
+      if (location.hash !== '#' + pageId) history.replaceState(null, '', '#' + pageId);
+    }
+
+    function rerender() { showPage(currentPage); }
+
+    function updateBadges() {
+      const data = loadData();
+      const unanswered = (user && user.counselor) ? data.counseling.filter(c => !c.reply).length : 0;
+      const b = document.getElementById('badge-counseling');
+      if (b) { b.textContent = unanswered; b.hidden = unanswered === 0; }
+      const red = groupDoubts(data.doubts, MY_SUBJECT).filter(g => g.count >= 10).length;
+      const d = document.getElementById('badge-doubts');
+      if (d) { d.textContent = red; d.hidden = red === 0; }
+    }
+
+    // =========================================================================
+    // ATTENDANCE
+    // =========================================================================
+    function renderAttendancePage(container) {
+      const students = loadData().students;
+      const totalStudents = students.length;
+      const irregular = students.filter(s => attendancePct(s) < REQUIRED_ATTENDANCE);
+      const regularStudents = totalStudents - irregular.length;
+
+      const rows = [...students].sort((a, b) => attendancePct(a) - attendancePct(b)).map(s => {
+        const pct = attendancePct(s);
+        const isIrregular = pct < REQUIRED_ATTENDANCE;
+        const need = isIrregular
+          ? (canRecover(s) ? `Must attend next ${classesNeeded(s)}` : `Needs condonation (max ${bestPossiblePct(s).toFixed(0)}%)`)
+          : `Can miss ${classesCanMiss(s)}`;
+        return `
+          <tr class="${isIrregular ? 'row-irregular' : 'row-regular'}">
+            <td class="reg-cell">${escapeHTML(s.reg)}</td>
+            <td class="name-cell">${escapeHTML(s.name)}</td>
+            <td>${s.attended} / ${s.total}</td>
+            <td>
+              <div class="pct-cell-wrapper">
+                <span class="pct-number">${pct.toFixed(1)}%</span>
+                <div class="progress-bar-bg" title="${pct.toFixed(1)}%">
+                  <div class="progress-bar-fill" style="width:${Math.min(100, Math.max(0, pct))}%"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge ${isIrregular ? 'irregular' : 'regular'}">
+                <span class="badge-dot"></span>${isIrregular ? 'Shortage' : 'Regular'}
+              </span>
+            </td>
+            <td class="need-cell">${need}</td>
+          </tr>`;
+      }).join('');
+
+      const markRows = students.map(s => `
+        <label class="mark-row">
+          <input type="checkbox" name="present" value="${escapeHTML(s.reg)}" checked>
+          <span>${escapeHTML(s.reg)}</span><span>${escapeHTML(s.name)}</span>
+        </label>`).join('');
+
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Attendance overview</h1>
+          <p class="page-subtitle">${escapeHTML(CLASS_NAME)}, ${escapeHTML(MY_SUBJECT)}. Students below ${REQUIRED_ATTENDANCE}% see an alert on their dashboard automatically.</p>
+        </div>
+
+        <div class="summary-cards-grid">
+          <div class="summary-card card-total">
+            <div class="card-info">
+              <span class="card-label">Total students</span>
+              <span class="card-value">${totalStudents}</span>
+              <span class="card-subtext">In this section</span>
+            </div>
+          </div>
+          <div class="summary-card card-regular">
+            <div class="card-info">
+              <span class="card-label">Regular</span>
+              <span class="card-value">${regularStudents}</span>
+              <span class="card-subtext">At or above ${REQUIRED_ATTENDANCE}%</span>
+            </div>
+          </div>
+          <div class="summary-card card-irregular">
+            <div class="card-info">
+              <span class="card-label">Shortage</span>
+              <span class="card-value">${irregular.length}</span>
+              <span class="card-subtext">Below ${REQUIRED_ATTENDANCE}%: ${irregular.map(s => escapeHTML(s.name)).join(', ') || 'none'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mark-bar">
+          <button type="button" class="btn-primary" onclick="toggleMarking()">${markingOpen ? 'Cancel' : "Mark today's class"}</button>
+          ${loadData().lastMarked ? `<button type="button" class="btn-secondary" onclick="undoLastClass()">Undo last marked class</button>` : ''}
+        </div>
+
+        ${markingOpen ? `
+          <form class="announcement-form-card" onsubmit="saveTodaysClass(event)">
+            <h2 class="form-title">Who was present today?</h2>
+            <p class="form-hint">Everyone is ticked. Untick the students who were absent, then save.</p>
+            <div class="mark-grid">${markRows}</div>
+            <div class="form-actions">
+              <span class="form-note">Saving adds one class for everyone and updates each student's alert.</span>
+              <button type="submit" class="btn-primary">Save attendance</button>
+            </div>
+          </form>` : ''}
+
+        <section class="table-container" aria-label="Student attendance list">
+          <div class="table-header-box">
+            <h2 class="table-header-title">Student attendance roster</h2>
+            <span class="table-criterion">Lowest attendance first</span>
+          </div>
+          <div class="table-responsive">
+            <table class="attendance-table">
+              <thead>
+                <tr>
+                  <th scope="col">Reg no</th><th scope="col">Name</th><th scope="col">Classes</th>
+                  <th scope="col">Attendance</th><th scope="col">Status</th><th scope="col">To stay eligible</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </section>`;
+    }
+
+    function toggleMarking() { markingOpen = !markingOpen; rerender(); }
+
+    function saveTodaysClass(e) {
+      e.preventDefault();
+      const present = [...e.target.querySelectorAll('input[name="present"]:checked')].map(i => i.value);
+      updateData(d => {
+        d.students.forEach(s => { s.total += 1; if (present.includes(s.reg)) s.attended += 1; });
+        d.lastMarked = { present: present, date: new Date().toISOString() };
+      });
+      markingOpen = false;
+      rerender();
+    }
+
+    function undoLastClass() {
+      if (!confirm('Remove the last marked class for every student?')) return;
+      updateData(d => {
+        if (!d.lastMarked) return;
+        d.students.forEach(s => {
+          s.total = Math.max(0, s.total - 1);
+          if (d.lastMarked.present.includes(s.reg)) s.attended = Math.max(0, s.attended - 1);
+        });
+        d.lastMarked = null;
+      });
+      rerender();
+    }
+
+    // =========================================================================
+    // DOUBTS (anonymous — counts only)
+    // =========================================================================
+    function groupDoubts(doubts, subject) {
+      const groups = {};
+      doubts.filter(d => subject === 'All' || d.subject === subject).forEach(d => {
+        const key = d.subject + '|' + d.topic;
+        if (!groups[key]) groups[key] = { subject: d.subject, topic: d.topic, count: 0, notes: [], latest: '' };
+        groups[key].count += 1;
+        if (d.text) groups[key].notes.push(d.text);
+        if (String(d.date) > groups[key].latest) groups[key].latest = String(d.date);
+      });
+      return Object.values(groups).sort((a, b) => b.count - a.count);
+    }
+
+    function renderDoubtsPage(container) {
+      const data = loadData();
+      const groups = groupDoubts(data.doubts, doubtSubject);
+      const maxCount = Math.max(10, ...groups.map(g => g.count));
+      const options = ['All', ...Object.keys(SUBJECTS)].map(s =>
+        `<option value="${escapeHTML(s)}" ${s === doubtSubject ? 'selected' : ''}>${s === 'All' ? 'All subjects' : escapeHTML(s)}</option>`).join('');
+
+      const cards = groups.map(g => {
+        const level = g.count >= 10 ? 'level-red' : g.count >= 5 ? 'level-orange' : 'level-green';
+        const notes = g.notes.slice(-3).reverse();
+        return `
+          <div class="doubt-card ${level}">
+            <div class="doubt-card-top">
+              <div>
+                <div class="doubt-topic-name">${escapeHTML(g.topic)}</div>
+                ${doubtSubject === 'All' ? `<div class="doubt-subject">${escapeHTML(g.subject)}</div>` : ''}
+              </div>
+              <div class="doubt-count-box">
+                <span class="doubt-count-number">${g.count}</span>
+                <span class="doubt-count-label">${g.count === 1 ? 'student' : 'students'}</span>
+              </div>
+            </div>
+            ${g.count >= 10 ? `<div class="doubt-tag-warning">Needs re-teaching</div>` : ''}
+            <div class="doubt-bar-wrapper">
+              <div class="doubt-bar-bg"><div class="doubt-bar-fill" style="width:${Math.round(g.count / maxCount * 100)}%"></div></div>
+            </div>
+            ${notes.length ? `<ul class="doubt-notes">${notes.map(n => `<li>${escapeHTML(n)}</li>`).join('')}</ul>` : ''}
+            <button type="button" class="btn-secondary btn-small"
+              data-subject="${escapeHTML(g.subject)}" data-topic="${escapeHTML(g.topic)}"
+              onclick="markRetaught(this.dataset.subject, this.dataset.topic)">Mark as re-taught</button>
+          </div>`;
+      }).join('');
+
+      const log = data.retaught.slice(-5).reverse().map(r =>
+        `<li><strong>${escapeHTML(r.topic)}</strong> (${escapeHTML(r.subject)}) re-taught on ${formatDate(r.date)}, ${r.count} students had flagged it</li>`).join('');
+
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Anonymous doubts</h1>
+          <p class="page-subtitle">Students pick the topic they didn't understand. You see counts and optional notes, never names.</p>
+        </div>
+        <div class="filter-wrapper" style="margin-bottom:1rem">
+          <label for="doubt-subject" class="filter-label">Subject:</label>
+          <select id="doubt-subject" class="filter-select" onchange="doubtSubject=this.value; rerender()">${options}</select>
+        </div>
+        <div class="doubts-grid">
+          ${cards || `<p class="empty-note">No open doubts for this subject. When students flag a topic it appears here.</p>`}
+        </div>
+        ${log ? `<section class="announcement-form-card" style="margin-top:1.5rem">
+          <h2 class="form-title">Re-teaching log</h2>
+          <p class="form-hint">This log is added to the NAAC/NBA report as evidence of remedial teaching.</p>
+          <ul class="retaught-log">${log}</ul></section>` : ''}`;
+    }
+
+    function markRetaught(subject, topic) {
+      if (!confirm(`Mark "${topic}" as re-taught? Its count will reset to zero.`)) return;
+      updateData(d => {
+        const count = d.doubts.filter(x => x.subject === subject && x.topic === topic).length;
+        d.doubts = d.doubts.filter(x => !(x.subject === subject && x.topic === topic));
+        d.retaught.push({ subject, topic, count, date: new Date().toISOString() });
+      });
+      rerender();
+    }
+
+    // =========================================================================
+    // COUNSELING INBOX (private — named, unlike doubts)
+    // =========================================================================
+    function renderCounselingPage(container) {
+      const msgs = [...loadData().counseling].sort((a, b) => (!!a.reply - !!b.reply) || String(b.date).localeCompare(String(a.date)));
+      const items = msgs.map(c => `
+        <article class="announcement-item">
+          <div class="announcement-header">
+            <h3 class="announcement-title">${escapeHTML(c.name)} <span class="muted-inline">${escapeHTML(c.reg)}</span></h3>
+            <div class="announcement-meta">
+              <span class="cat-badge cat-general">${escapeHTML(c.about)}</span>
+              <span class="announcement-date">${formatDate(c.date)}</span>
+            </div>
+          </div>
+          <p class="announcement-body">${escapeHTML(c.text)}</p>
+          ${c.reply
+            ? `<div class="counsel-reply"><strong>Your reply (${formatDate(c.replyDate)})</strong><p>${escapeHTML(c.reply)}</p></div>`
+            : `<form class="counsel-form" onsubmit="sendReply(event, ${c.id})">
+                 <label class="form-label" for="r-${c.id}">Reply to ${escapeHTML(c.name)}</label>
+                 <textarea id="r-${c.id}" class="form-control" rows="2" required placeholder="Write a reply. Only this student will see it."></textarea>
+                 <div class="form-actions"><span></span><button type="submit" class="btn-primary">Send reply</button></div>
+               </form>`}
+        </article>`).join('');
+
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Counseling inbox</h1>
+          <p class="page-subtitle">Private messages from your mentees. Unanswered messages are shown first.</p>
+        </div>
+        <div class="announcements-list">
+          ${items || `<p class="empty-note">No messages yet. When a student writes from the Counselor page, it appears here.</p>`}
+        </div>`;
+    }
+
+    function sendReply(e, id) {
+      e.preventDefault();
+      const text = document.getElementById('r-' + id).value.trim();
+      if (!text) return;
+      updateData(d => {
+        const m = d.counseling.find(x => x.id === id);
+        if (m) { m.reply = text; m.replyDate = new Date().toISOString(); }
+      });
+      rerender();
+    }
+
+    // =========================================================================
+    // ANNOUNCEMENTS
+    // =========================================================================
+    function renderAnnouncementsPage(container) {
+      const list = [...loadData().announcements].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const items = list.map(item => {
+        const cat = (item.category || 'General').toLowerCase();
+        const badge = ['event', 'notes', 'exam'].includes(cat) ? 'cat-' + cat : 'cat-general';
+        const link = safeUrl(item.link);
+        return `
+          <article class="announcement-item">
+            <div class="announcement-header">
+              <h3 class="announcement-title">${escapeHTML(item.title)}</h3>
+              <div class="announcement-meta">
+                <span class="cat-badge ${badge}">${escapeHTML(item.category)}</span>
+                <span class="announcement-date">${formatDate(item.date)}</span>
+              </div>
+            </div>
+            <p class="announcement-body">${escapeHTML(item.message)}</p>
+            ${item.eventDate ? `<p class="announcement-body"><strong>Event date:</strong> ${formatDate(item.eventDate)}</p>` : ''}
+            <div class="announcement-foot">
+              ${link ? `<a href="${escapeHTML(link)}" class="announcement-link" target="_blank" rel="noopener">Open link</a>` : '<span></span>'}
+              <button type="button" class="btn-delete" onclick="deleteAnnouncement(${item.id})">Delete</button>
+            </div>
+          </article>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Announcements and notes</h1>
+          <p class="page-subtitle">Posts appear on every student's dashboard. Events also appear on the student Events page.</p>
+        </div>
+        <div class="announcement-form-card">
+          <h2 class="form-title">New announcement</h2>
+          <form id="announcement-form" onsubmit="handlePostAnnouncement(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="ann-title" class="form-label">Title</label>
+                <input type="text" id="ann-title" class="form-control" placeholder="e.g. DSP Unit 4 practice problems" required maxlength="120" />
+              </div>
+              <div class="form-group">
+                <label for="ann-category" class="form-label">Category</label>
+                <select id="ann-category" class="form-control" onchange="document.getElementById('event-date-group').hidden = this.value !== 'Event'">
+                  <option value="Event">Event</option>
+                  <option value="Notes" selected>Notes</option>
+                  <option value="Exam">Exam</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="ann-message" class="form-label">Message</label>
+              <textarea id="ann-message" class="form-control" rows="3" required maxlength="1000" placeholder="Write the details for students"></textarea>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="ann-link" class="form-label">Link (optional)</label>
+                <input type="url" id="ann-link" class="form-control" placeholder="https://forms.gle/..." />
+              </div>
+              <div class="form-group" id="event-date-group" hidden>
+                <label for="ann-event-date" class="form-label">Event date</label>
+                <input type="date" id="ann-event-date" class="form-control" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <span class="form-note">Students see it the next time their page loads.</span>
+              <button type="submit" class="btn-primary">Post announcement</button>
+            </div>
+          </form>
+        </div>
+        <section aria-label="Announcements feed">
+          <div class="announcements-list">${items || `<p class="empty-note">Nothing posted yet.</p>`}</div>
+        </section>`;
+    }
+
+    function handlePostAnnouncement(e) {
+      e.preventDefault();
+      const title = document.getElementById('ann-title').value.trim();
+      const message = document.getElementById('ann-message').value.trim();
+      const category = document.getElementById('ann-category').value;
+      const link = document.getElementById('ann-link').value.trim();
+      const eventDate = category === 'Event' ? document.getElementById('ann-event-date').value : '';
+      if (!title || !message) return;
+      if (link && !safeUrl(link)) { alert('Links must start with http:// or https://'); return; }
+      updateData(d => d.announcements.push({
+        id: newId(), title, message, category, link, eventDate, date: new Date().toISOString()
+      }));
+      rerender();
+    }
+
+    function deleteAnnouncement(id) {
+      if (!confirm('Delete this announcement for all students?')) return;
+      updateData(d => { d.announcements = d.announcements.filter(a => a.id !== id); });
+      rerender();
+    }
+
+    // =========================================================================
+    // ACCREDITATION (NAAC / NBA)
+    // =========================================================================
+    const CRITERIA = [
+      'Criterion 2 - Teaching-Learning',
+      'Criterion 3 - Research',
+      'Criterion 6 - Faculty Development'
+    ];
+
+    function renderAccreditationPage(container) {
+      const records = loadData().accreditation;
+      const filtered = records.filter(r => currentCriterionFilter === 'All' || r.criterion === currentCriterionFilter);
+      const thisYear = new Date().getFullYear();
+      const years = Array.from({ length: 7 }, (_, i) => thisYear - i);
+
+      const rows = filtered.length === 0
+        ? `<tr><td colspan="5" class="empty-cell">No records for this criterion yet. Add one above.</td></tr>`
+        : filtered.map(r => `
+            <tr>
+              <td style="font-weight:600">${escapeHTML(r.title)}</td>
+              <td>${r.year}</td>
+              <td><span class="type-pill">${escapeHTML(r.type)}</span></td>
+              <td><span class="crit-pill">${escapeHTML(r.criterion)}</span></td>
+              <td style="text-align:right">
+                <button type="button" class="btn-delete" onclick="handleDeleteAccreditation(${r.id})">Delete</button>
+              </td>
+            </tr>`).join('');
+
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Accreditation records</h1>
+          <p class="page-subtitle">Add each certificate once. The report also pulls in attendance and re-teaching data automatically.</p>
+        </div>
+        <div class="accred-form-card">
+          <h2 class="form-title">Add a certificate or record</h2>
+          <form id="accred-form" onsubmit="handleAddAccreditation(event)">
+            <div class="accred-form-grid">
+              <div class="form-group">
+                <label for="acc-title" class="form-label">Title</label>
+                <input type="text" id="acc-title" class="form-control" placeholder="e.g. Modern pedagogies FDP" required maxlength="150" />
+              </div>
+              <div class="form-group">
+                <label for="acc-year" class="form-label">Year</label>
+                <select id="acc-year" class="form-control">${years.map(y => `<option>${y}</option>`).join('')}</select>
+              </div>
+              <div class="form-group">
+                <label for="acc-type" class="form-label">Type</label>
+                <select id="acc-type" class="form-control">
+                  <option>FDP</option><option>Research Paper</option><option>Workshop</option>
+                  <option>Conference</option><option>Certification</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="acc-criterion" class="form-label">Criterion</label>
+                <select id="acc-criterion" class="form-control">
+                  ${CRITERIA.map(c => `<option ${c.startsWith('Criterion 6') ? 'selected' : ''}>${c}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:1rem; display:flex; justify-content:flex-end;">
+              <button type="submit" class="btn-primary">Add record</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="accred-actions-bar">
+          <div class="filter-wrapper">
+            <label for="crit-filter" class="filter-label">Show:</label>
+            <select id="crit-filter" class="filter-select" onchange="currentCriterionFilter=this.value; rerender()">
+              <option value="All">All criteria</option>
+              ${CRITERIA.map(c => `<option ${c === currentCriterionFilter ? 'selected' : ''}>${c}</option>`).join('')}
+            </select>
+          </div>
+          <button type="button" class="btn-generate-report" onclick="openReportModal()">Generate NAAC/NBA report</button>
+        </div>
+
+        <section class="table-container" aria-label="Accreditation records">
+          <div class="table-header-box">
+            <h2 class="table-header-title">Evidence records</h2>
+            <span class="table-criterion">${filtered.length} record(s)</span>
+          </div>
+          <div class="table-responsive">
+            <table class="attendance-table">
+              <thead><tr><th scope="col">Title</th><th scope="col">Year</th><th scope="col">Type</th><th scope="col">Criterion</th><th scope="col" style="text-align:right">Action</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </section>`;
+    }
+
+    function handleAddAccreditation(e) {
+      e.preventDefault();
+      const title = document.getElementById('acc-title').value.trim();
+      if (!title) return;
+      updateData(d => d.accreditation.unshift({
+        id: newId(), title,
+        year: parseInt(document.getElementById('acc-year').value, 10),
+        type: document.getElementById('acc-type').value,
+        criterion: document.getElementById('acc-criterion').value
+      }));
+      rerender();
+    }
+
+    function handleDeleteAccreditation(id) {
+      if (!confirm('Delete this record?')) return;
+      updateData(d => { d.accreditation = d.accreditation.filter(r => r.id !== id); });
+      rerender();
+    }
+
+    // =========================================================================
+    // REPORT MODAL
+    // =========================================================================
+    function openReportModal() {
+      const data = loadData();
+      const groups = {};
+      data.accreditation.forEach(r => { (groups[r.criterion] = groups[r.criterion] || []).push(r); });
+
+      const section = (title, count, head, body) => `
+        <div class="report-criterion-section">
+          <div class="report-criterion-heading"><span>${escapeHTML(title)}</span>
+            <span class="report-count-tag">${count} ${count === 1 ? 'record' : 'records'}</span></div>
+          <table class="report-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>
+        </div>`;
+
+      let html = Object.keys(groups).sort().map(crit => section(crit, groups[crit].length,
+        `<th class="center">#</th><th>Activity / paper / certificate</th><th class="center">Year</th><th>Type</th>`,
+        groups[crit].map((r, i) => `<tr><td class="center">${i + 1}</td><td><strong>${escapeHTML(r.title)}</strong></td><td class="center">${r.year}</td><td>${escapeHTML(r.type)}</td></tr>`).join('')
+      )).join('');
+
+      // Auto evidence 1: remedial teaching from anonymous doubts
+      if (data.retaught.length) {
+        html += section('Remedial teaching from anonymous doubts', data.retaught.length,
+          `<th class="center">#</th><th>Topic</th><th>Subject</th><th class="center">Students</th><th>Date</th>`,
+          data.retaught.map((r, i) => `<tr><td class="center">${i + 1}</td><td>${escapeHTML(r.topic)}</td><td>${escapeHTML(r.subject)}</td><td class="center">${r.count}</td><td>${formatDate(r.date)}</td></tr>`).join(''));
+      }
+
+      // Auto evidence 2: attendance monitoring summary
+      const s = data.students;
+      const avg = s.length ? s.reduce((t, x) => t + attendancePct(x), 0) / s.length : 0;
+      const short = s.filter(x => attendancePct(x) < REQUIRED_ATTENDANCE).length;
+      html += section('Attendance monitoring', 1,
+        `<th>Students</th><th class="center">Average attendance</th><th class="center">Below ${REQUIRED_ATTENDANCE}%</th><th class="center">Counseling messages answered</th>`,
+        `<tr><td>${s.length}</td><td class="center">${avg.toFixed(1)}%</td><td class="center">${short}</td>
+             <td class="center">${data.counseling.filter(c => c.reply).length} of ${data.counseling.length}</td></tr>`);
+
+      document.getElementById('report-modal-content').innerHTML = `
+        <div class="report-paper">
+          <div class="report-top-header">
+            <div class="report-college">GSSS Institute of Engineering &amp; Technology for Women, Mysuru</div>
+            <div class="report-title-doc">NAAC &amp; NBA Faculty Evidence Portfolio</div>
+            <div class="report-meta-grid">
+              <div class="report-meta-item"><strong>Department:</strong> Electronics &amp; Communication Engineering</div>
+              <div class="report-meta-item"><strong>Faculty:</strong> ${escapeHTML(user.name)}</div>
+              <div class="report-meta-item"><strong>Report date:</strong> ${formatDate(new Date())}</div>
+              <div class="report-meta-item"><strong>Class:</strong> ${escapeHTML(CLASS_NAME)}</div>
+              <div class="report-meta-item"><strong>Certificates:</strong> ${data.accreditation.length}</div>
+            </div>
+          </div>
+          ${html}
+        </div>`;
+
+      document.getElementById('report-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.querySelector('.btn-close-modal').focus();
+    }
+
+    function closeReportModal() {
+      document.getElementById('report-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeReportModal(); });
+    document.getElementById('report-modal').addEventListener('click', e => {
+      if (e.target.id === 'report-modal') closeReportModal();
+    });
+
+
+    // =========================================================================
+    // DATABASE VIEWER — shows every table the portal stores, for demos/juries
+    // =========================================================================
+    const TABLE_INFO = {
+      students:      'One row per student: register number, name, classes attended and classes held.',
+      doubts:        'Anonymous doubts. Note: there is no student column, so a doubt can never be traced to a student.',
+      retaught:      'Topics faculty marked as re-taught, with how many students had flagged them.',
+      counseling:    'Private messages. Has the student register number, because the counselor must know who wrote.',
+      announcements: 'Posts by faculty, shown on every student dashboard.',
+      events:        'College events shown on the student Events page.',
+      accreditation: 'Faculty certificates and records used in the NAAC/NBA report.'
+    };
+
+    function renderDatabasePage(container) {
+      const data = loadData();
+      const cell = v => {
+        if (v === null || v === undefined || v === '') return '<span class="muted-inline">empty</span>';
+        const t = typeof v === 'object' ? JSON.stringify(v) : String(v);
+        return escapeHTML(t.length > 60 ? t.slice(0, 60) + '…' : t);
+      };
+      const tables = Object.keys(TABLE_INFO).map(name => {
+        const restricted = name === 'counseling' && !(user && user.counselor);
+        const rows = restricted ? [] : (data[name] || []);
+        const cols = [...new Set(rows.flatMap(r => Object.keys(r)))];
+        const body = rows.length
+          ? `<div class="table-responsive"><table class="attendance-table db-table">
+               <thead><tr>${cols.map(c => `<th scope="col">${escapeHTML(c)}</th>`).join('')}</tr></thead>
+               <tbody>${rows.slice(0, 50).map(r => `<tr>${cols.map(c => `<td>${cell(r[c])}</td>`).join('')}</tr>`).join('')}</tbody>
+             </table></div>${rows.length > 50 ? `<p class="form-hint" style="padding:0 1.5rem 1rem">Showing first 50 of ${rows.length} rows.</p>` : ''}`
+          : `<p class="form-hint" style="padding:1rem 1.5rem">${restricted ? 'Restricted: only the class counselor can see these private messages.' : 'No rows yet.'}</p>`;
+        return `<section class="table-container" style="margin-bottom:1.25rem">
+            <div class="table-header-box">
+              <h2 class="table-header-title"><code>${name}</code></h2>
+              <span class="table-criterion">${restricted ? 'restricted' : rows.length + ' row(s)'}</span>
+            </div>
+            <p class="form-hint" style="padding:0.75rem 1.5rem 0">${TABLE_INFO[name]}</p>
+            ${body}
+          </section>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Database</h1>
+          <p class="page-subtitle">Every table the portal stores. This view refreshes when students submit something.</p>
+        </div>
+        <div class="announcement-form-card">
+          <h2 class="form-title">Where is the data stored?</h2>
+          <p class="form-hint">In this prototype the data is saved in the browser's <b>localStorage</b> under the key <code>${STORE_KEY}</code>,
+          as one JSON object with one list per table. To see the raw data: press <b>F12</b> → <b>Application</b> → <b>Local Storage</b>.
+          The production design moves the same tables to Supabase (PostgreSQL); see <code>later-supabase/schema.sql</code>.</p>
+          <div class="form-actions"><span></span>
+            <button type="button" class="btn-secondary" onclick="downloadJSON()">Download data as JSON</button></div>
+        </div>
+        ${tables}`;
+    }
+
+    // =========================================================================
+    // CHANGE PASSWORD
+    // =========================================================================
+    function renderPasswordPage(container) {
+      container.innerHTML = `
+        <div class="page-header">
+          <h1 class="page-title">Change password</h1>
+          <p class="page-subtitle">Choose a password only you know. Use at least 8 characters with letters and numbers.</p>
+        </div>
+        <div class="announcement-form-card" style="max-width:520px">
+          <form id="pw-form" autocomplete="off" onsubmit="handleChangePassword(event)">
+            <div class="form-group">
+              <label for="pw-old" class="form-label">Current password</label>
+              <input type="password" id="pw-old" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="pw-new" class="form-label">New password</label>
+              <input type="password" id="pw-new" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="pw-confirm" class="form-label">Type the new password again</label>
+              <input type="password" id="pw-confirm" class="form-control" required />
+            </div>
+            <label class="form-note" style="display:flex; gap:0.5rem; align-items:center; margin:0.5rem 0 1rem">
+              <input type="checkbox" onchange="['pw-old','pw-new','pw-confirm'].forEach(i => document.getElementById(i).type = this.checked ? 'text' : 'password')"> Show passwords
+            </label>
+            <div class="form-actions">
+              <span id="pw-msg" role="status" style="font-weight:600"></span>
+              <button type="submit" class="btn-primary">Change password</button>
+            </div>
+          </form>
+          <p class="form-hint" style="margin-top:1rem">Demo note: the new password is saved in this browser only. The real version uses Supabase login.</p>
+        </div>`;
+    }
+    function handleChangePassword(e) {
+      e.preventDefault();
+      const r = changePassword(user, document.getElementById('pw-old').value,
+        document.getElementById('pw-new').value, document.getElementById('pw-confirm').value);
+      const msg = document.getElementById('pw-msg');
+      msg.textContent = r.message;
+      msg.style.color = r.ok ? 'var(--green-text, #15803d)' : '#b91c1c';
+      if (r.ok) e.target.reset();
+    }
+
+    function downloadJSON() {
+      const blob = new Blob([JSON.stringify(loadData(), null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'smart-education-data.json';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    function handleResetDemo() {
+      if (!confirm('Reset all demo data (attendance, doubts, messages, announcements, records)?')) return;
+      resetData();
+      markingOpen = false;
+      rerender();
+    }
+
+    // =========================================================================
+    // START
+    // =========================================================================
+    if (user) {
+      if (!user.counselor) document.getElementById('btn-counseling').style.display = 'none';
+      document.getElementById('faculty-info').textContent = `${user.name} | ${CLASS_NAME} | ${MY_SUBJECT}`;
+      showPage(location.hash.slice(1) || 'attendance');
+      onDataChange(() => {
+        // Don't wipe a half-typed form when another tab changes data
+        const typing = document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
+        if (!typing && !markingOpen) rerender(); else updateBadges();
+      });
+    }
+  </script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

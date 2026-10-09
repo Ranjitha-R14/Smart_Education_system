@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counselor | Smart Education Portal</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../images/icon-192.png">
+</head>
+<body>
+<div id="shell"></div>
+<main class="page">
+  <h1>Message your counselor</h1>
+  <p class="lead">Only your class counselor can read these messages. Other students and teachers cannot.</p>
+
+  <section class="panel">
+    <form id="counselForm">
+      <label for="about">This is about</label>
+      <select id="about">
+        <option>Studies</option>
+        <option>Attendance</option>
+        <option>Career</option>
+        <option>Personal</option>
+      </select>
+      <label for="counselMessage">Message</label>
+      <textarea id="counselMessage" maxlength="1000" placeholder="Write your message here…"></textarea>
+      <button class="btn" type="submit" style="margin-top:16px">Send privately</button>
+      <p id="counselStatus" class="status" role="status"></p>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Your messages</h2>
+    <div id="thread"></div>
+  </section>
+  <p class="muted">If you feel unsafe or in crisis, please talk to someone you trust right away, or call the Tele-MANAS helpline at 14416.</p>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+  const user = requireRole("student");
+
+  document.getElementById("counselForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const box = document.getElementById("counselMessage");
+    const status = document.getElementById("counselStatus");
+    const text = box.value.trim();
+    if (!text) { status.className = "status err"; status.textContent = "Write a message before sending."; return; }
+    updateData(d => d.counseling.push({
+      id: newId(), reg: user.id, name: user.name, about: document.getElementById("about").value,
+      text: text, date: new Date().toISOString(), reply: "", replyDate: ""
+    }));
+    box.value = "";
+    status.className = "status ok";
+    status.textContent = "Sent. Your counselor's reply will appear below.";
+    render();
+  });
+
+  function render() {
+    const mine = loadData().counseling.filter(c => c.reg === user.id).reverse();
+    document.getElementById("thread").innerHTML = mine.length ? mine.map(c => `
+      <article class="item">
+        <div class="item-head"><span class="tag">${escapeHTML(c.about)}</span><span class="muted">${formatDate(c.date)}</span></div>
+        <p style="color:inherit">${escapeHTML(c.text)}</p>
+        ${c.reply
+          ? `<div class="reply"><b>Counselor replied</b><p>${escapeHTML(c.reply)}</p></div>`
+          : `<p class="pending">Waiting for a reply.</p>`}
+      </article>`).join("")
+      : `<p class="empty">No messages yet. Your counselor's replies will show here.</p>`;
+  }
+
+  if (user) { renderStudentShell(user, "counseling"); render(); onDataChange(render); }
+</script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

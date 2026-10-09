@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Events | Smart Education Portal</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../images/icon-192.png">
+</head>
+<body>
+<div id="shell"></div>
+<main class="page">
+  <h1>College events</h1>
+  <p class="lead">Upcoming events, including ones your faculty posted as announcements.</p>
+
+  <label for="eventSearch">Search events</label>
+  <input type="search" id="eventSearch" placeholder="Try 'expo' or 'placement'">
+
+  <section class="panel" style="margin-top:16px">
+    <div id="eventsList"></div>
+  </section>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+  const user = requireRole("student");
+
+  function allEvents() {
+    const data = loadData();
+    // Faculty announcements with category "Event" also appear here
+    const fromAnnouncements = data.announcements
+      .filter(a => a.category === "Event")
+      .map(a => ({ id: "a" + a.id, title: a.title, date: a.eventDate || a.date, details: a.message, link: a.link }));
+    return [...data.events, ...fromAnnouncements]
+      .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  }
+
+  function render() {
+    const q = document.getElementById("eventSearch").value.trim().toLowerCase();
+    const list = allEvents().filter(e => (e.title + " " + e.details).toLowerCase().includes(q));
+    const box = document.getElementById("eventsList");
+    if (!list.length) {
+      box.innerHTML = `<p class="empty">No events match "${escapeHTML(q)}". Clear the search to see all events.</p>`;
+      return;
+    }
+    box.innerHTML = list.map(e => {
+      const link = safeUrl(e.link);
+      return `<article class="item event-row">
+        <div>
+          <span class="date-chip">${formatDate(e.date)}</span>
+          <h3>${escapeHTML(e.title)}</h3>
+          <p>${escapeHTML(e.details)}</p>
+        </div>
+        ${link
+          ? `<a class="btn" href="${escapeHTML(link)}" target="_blank" rel="noopener">Apply</a>`
+          : `<span class="muted">Registration link coming soon</span>`}
+      </article>`;
+    }).join("");
+  }
+
+  document.getElementById("eventSearch").addEventListener("input", render);
+  if (user) { renderStudentShell(user, "events"); render(); onDataChange(render); }
+</script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

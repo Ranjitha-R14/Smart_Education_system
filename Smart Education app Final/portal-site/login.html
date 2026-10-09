@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login | Smart Education Portal</title>
+<style>
+  :root { --blue:#1d4ed8; --blue-dark:#1e3a8a; --ink:#0f172a; --muted:#475569; --bg:#eef3fb; --card:#ffffff; --line:#cbd5e1; --err:#b91c1c; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#e8eefc; --muted:#9fb0d0; --bg:#0e1626; --card:#16213a; --line:#334566; --err:#fca5a5; } }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; font-family:"Segoe UI", system-ui, Arial, sans-serif; background:var(--bg); color:var(--ink); display:flex; flex-direction:column; }
+  header { background:linear-gradient(90deg, var(--blue-dark), var(--blue)); color:#fff; padding:18px 24px; font-size:20px; font-weight:700; }
+  header a { color:#fff; text-decoration:none; }
+  main { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+  form { background:var(--card); width:100%; max-width:400px; padding:28px; border-radius:14px; border:1px solid rgba(29,78,216,.18); }
+  h1 { margin:0 0 6px; font-size:26px; }
+  p.sub { margin:0 0 20px; color:var(--muted); }
+  label { display:block; font-weight:600; margin:14px 0 6px; }
+  input { width:100%; padding:12px; border:1px solid var(--line); border-radius:8px; font-size:16px; background:transparent; color:var(--ink); }
+  input:focus-visible { outline:3px solid #93c5fd; outline-offset:1px; }
+  button { width:100%; margin-top:20px; padding:13px; border:0; border-radius:10px; background:var(--blue); color:#fff; font-size:16px; font-weight:600; cursor:pointer; }
+  button:hover { background:var(--blue-dark); }
+  #msg { min-height:22px; margin-top:12px; color:var(--err); font-weight:600; }
+  .links { display:flex; justify-content:space-between; margin-top:10px; }
+  .links a { color:var(--blue); text-decoration:none; font-weight:600; }
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="images/icon-192.png">
+</head>
+<body>
+  <header><a href="index.html">GSSSIETW &nbsp;|&nbsp; Smart Education Portal</a></header>
+  <main>
+    <form id="loginForm" autocomplete="off" novalidate>
+      <h1 id="title">Login</h1>
+      <p class="sub" id="sub">Enter your details to continue.</p>
+      <label for="user" id="userLabel">Register number</label>
+      <input id="user" type="text" required autocapitalize="characters">
+      <label for="pass">Password</label>
+      <input id="pass" type="password" required>
+      <button type="submit">Log in</button>
+      <div id="msg" role="alert"></div>
+      <p style="margin-top:14px; color:var(--muted); font-size:14px">Forgot your password? Contact your department office.</p>
+      <div class="links">
+        <a href="index.html">Back to home</a>
+        <a id="switchRole" href="#"></a>
+      </div>
+    </form>
+  </main>
+
+<script src="js/app.js"></script>
+<script>
+  // Where each role goes after a correct login (paths match the folders in this project).
+  const DESTINATION = { faculty: "faculty/index.html", student: "student/dashboard.html" };
+
+  const role = new URLSearchParams(location.search).get("role") === "faculty" ? "faculty" : "student";
+  const other = role === "faculty" ? "student" : "faculty";
+
+  // Always ask for the password: opening the login page logs out any earlier session in this tab.
+  try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+
+  document.getElementById("title").textContent = role === "faculty" ? "Faculty login" : "Student login";
+  document.getElementById("userLabel").textContent = role === "faculty" ? "College email" : "Register number";
+  document.getElementById("user").placeholder = role === "faculty" ? "name@college.edu" : "e.g. 21EC001";
+  const sw = document.getElementById("switchRole");
+  sw.textContent = role === "faculty" ? "I'm a student" : "I'm faculty";
+  sw.href = "login.html?role=" + other;
+
+  document.getElementById("loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const id = document.getElementById("user").value;
+    const pw = document.getElementById("pass").value;
+    const msg = document.getElementById("msg");
+    if (!id.trim() || !pw) { msg.textContent = "Enter both fields to log in."; return; }
+    if (!login(role, id, pw)) {
+      msg.textContent = role === "faculty"
+        ? "That email and password don't match a faculty account."
+        : "That register number and password don't match a student account.";
+      return;
+    }
+    location.href = DESTINATION[role];
+  });
+</script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

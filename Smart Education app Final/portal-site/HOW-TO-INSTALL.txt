@@ -1,0 +1,27 @@
+SMART EDUCATION PORTAL - HOW TO INSTALL ON WINDOWS
+===================================================
+
+STEP 1 - UNBLOCK THE ZIP FILE (do this BEFORE unzipping)
+  Windows blocks files downloaded from the internet. Remove the block first:
+    a) Right-click the downloaded ZIP file  >  Properties
+    b) In the General tab, at the bottom, tick  "Unblock"
+    c) Click Apply, then OK
+
+STEP 2 - UNZIP
+  Right-click the ZIP  >  Extract All  >  Extract
+
+STEP 3 - INSTALL
+  Open the extracted folder and double-click:  Install-Windows.bat
+  (If Windows still says "protected your PC": click "More info", then "Run anyway".)
+
+STEP 4 - DONE
+  The "Smart Education Portal" icon appears on your Desktop and Start menu.
+  Double-click it to open the portal in its own window. Works offline.
+
+To remove the app later: double-click  Uninstall-Windows.bat
+
+
+OTHER WAYS (nothing to unblock)
+  - Open the website link in Chrome or Edge and click the blue "Install app" button.
+  - Android: open the website in Chrome > Install app.
+  - iPhone: open the website in Safari > Share > Add to Home Screen.

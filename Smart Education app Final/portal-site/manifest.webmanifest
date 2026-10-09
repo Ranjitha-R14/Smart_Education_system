@@ -1,0 +1,16 @@
+{
+  "name": "Smart Education Portal",
+  "short_name": "EduPortal",
+  "description": "Attendance alerts, anonymous doubts, counseling and NAAC/NBA reports.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#1d4ed8",
+  "icons": [
+    { "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [ { "name": "Login", "url": "login.html" } ]
+}

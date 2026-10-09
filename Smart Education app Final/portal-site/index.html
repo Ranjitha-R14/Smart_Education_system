@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GSSSIETW | Smart Education Portal</title>
+<meta name="description" content="Smart Education Portal of GSSS Institute of Engineering & Technology for Women, Mysuru: attendance alerts, anonymous doubts, counseling and NAAC/NBA reports.">
+<style>
+  :root {
+    --brand: #1d4ed8; --brand-dark: #1e3a8a; --brand-deep: #172554;
+    --blue: #1d4ed8; --blue-dark: #1e3a8a;
+    --gold: #f4b740;
+    --ink: #0f172a; --muted: #475569; --bg: #f5f7fb; --card: #ffffff; --line: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, Arial, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.55; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+
+  .strip { background: var(--brand-deep); color: #dbe6ff; font-size: 13px; }
+  .strip .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 6px 20px; }
+  .strip span + span::before { content: "|"; margin: 0 10px; opacity: .5; }
+
+  .wrap { max-width: 1140px; margin: 0 auto; }
+
+  .college-head { background: #fff; border-bottom: 4px solid var(--brand); }
+  .college-head .wrap { display: flex; align-items: center; gap: 18px; padding: 16px 20px; }
+  .logo { width: 76px; height: 76px; flex: none; border-radius: 50%; object-fit: contain; }
+  .logo-fallback { width: 76px; height: 76px; flex: none; border-radius: 50%; background: linear-gradient(135deg, var(--brand-dark), var(--brand)); color: #fff;
+    display: none; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; letter-spacing: .5px; }
+  .college-name { font-size: clamp(19px, 2.6vw, 28px); font-weight: 800; color: var(--brand); line-height: 1.2; margin: 0; color: var(--brand-dark); }
+  .college-sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+  nav.main { background: linear-gradient(90deg, var(--brand-dark), var(--brand)); }
+  nav.main .wrap { display: flex; gap: 4px; padding: 0 12px; overflow-x: auto; }
+  nav.main a { color: #fff; text-decoration: none; padding: 12px 14px; font-weight: 600; font-size: 15px; white-space: nowrap; }
+  nav.main a:hover { background: rgba(255,255,255,.12); }
+  nav.main a.cta { margin-left: auto; background: var(--gold); color: var(--brand-dark); }
+
+  .hero {
+    position: relative; color: #fff; min-height: 440px; display: flex; align-items: flex-end;
+    background:
+      linear-gradient(180deg, rgba(10,20,50,.15) 0%, rgba(10,20,50,.80) 100%),
+      url("images/campus.jpg") center / cover no-repeat,
+      linear-gradient(135deg, var(--brand-deep), var(--brand));
+  }
+  .hero .wrap { width: 100%; padding: 48px 20px; }
+  .hero .kicker { display: inline-block; background: var(--gold); color: var(--brand-dark); font-weight: 700; font-size: 13px;
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .hero h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.1; margin: 0 0 10px; max-width: 22ch; }
+  .hero p { font-size: 18px; max-width: 58ch; margin: 0 0 24px; color: #f1f5f9; }
+  .btn { display: inline-block; padding: 13px 24px; border-radius: 10px; font-weight: 700; text-decoration: none; }
+  .btn.primary { background: var(--gold); color: var(--brand-dark); }
+  .btn.primary:hover { background: #ffc95c; }
+  .btn.light { background: rgba(255,255,255,.14); color: #fff; border: 1.5px solid rgba(255,255,255,.6); }
+  .btn.light:hover { background: rgba(255,255,255,.24); }
+  .btn.blue { background: var(--blue); color: #fff; }
+  .btn.blue:hover { background: var(--blue-dark); }
+  .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+
+  .install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .install-grid .feature { border-top-color: var(--gold); }
+  .install-grid ol { margin: 8px 0 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  .install-grid li { margin-bottom: 4px; }
+  @media (max-width: 800px) { .install-grid { grid-template-columns: 1fr; } }
+
+  section.block { padding: 56px 20px; }
+  section.block h2 { font-size: 28px; margin: 0 0 8px; color: var(--brand-dark); }
+  .lead { color: var(--muted); max-width: 70ch; margin: 0 0 28px; }
+
+  .about { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; align-items: start; }
+  .facts { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; }
+  .facts dl { margin: 0; display: grid; gap: 12px; }
+  .facts dt { font-size: 13px; color: var(--muted); }
+  .facts dd { margin: 0; font-weight: 600; }
+
+  .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .feature { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--blue); border-radius: 12px; padding: 18px; }
+  .feature h3 { margin: 0 0 6px; font-size: 17px; }
+  .feature p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .portal { background: #eef2fb; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .choice { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px; }
+  .choice h3 { margin: 0 0 8px; font-size: 22px; }
+  .choice p { margin: 0 0 20px; color: var(--muted); }
+
+  footer { background: #0b1530; color: #d6e0f5; padding: 32px 20px; font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  footer a { color: var(--gold); }
+
+  @media (max-width: 860px) {
+    .about, .choices { grid-template-columns: 1fr; }
+    .features { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .features { grid-template-columns: 1fr; }
+    .logo, .logo-fallback { width: 56px; height: 56px; font-size: 13px; }
+    .hero { min-height: 380px; }
+    .strip .wrap { font-size: 12px; }
+  }
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EduPortal">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="images/icon-192.png">
+</head>
+<body>
+
+  <div class="strip">
+    <div class="wrap">
+      <div><span>Affiliated to VTU, Belagavi</span><span>Approved by AICTE</span><span>NAAC Accredited</span></div>
+      <div>Department of Electronics &amp; Communication Engineering</div>
+    </div>
+  </div>
+
+  <header class="college-head">
+    <div class="wrap">
+      <!-- Save the college logo as images/logo.png. If it is missing, the initials badge shows instead. -->
+      <img class="logo" src="images/logo.png" alt="GSSSIETW logo"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="logo-fallback" aria-hidden="true">GSSS</div>
+      <div>
+        <p class="college-name">GSSS Institute of Engineering &amp; Technology for Women</p>
+        <p class="college-sub">K.R.S. Road, Metagalli, Mysuru - 570016, Karnataka</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main" aria-label="Main">
+    <div class="wrap">
+      <a href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#features">Portal features</a>
+      <a href="#install">Install app</a>
+      <a href="https://gsssietw.ac.in/" target="_blank" rel="noopener">College website</a>
+      <a class="cta" href="#portal">Portal login</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <span class="kicker">Smart Education Portal</span>
+        <h1>Know early. Ask freely. Get help privately.</h1>
+        <p>One place for students and faculty of the ECE department: attendance alerts before it's too late, anonymous doubts, private counseling, announcements and one-click NAAC/NBA reports.</p>
+        <div class="actions">
+          <a class="btn primary" href="login.html?role=student">Student login</a>
+          <a class="btn light" href="login.html?role=faculty">Faculty login</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="about">
+      <div class="wrap about">
+        <div>
+          <h2>About the institute</h2>
+          <p class="lead">GSSS Institute of Engineering &amp; Technology for Women, Mysuru, was started by GSSS(R) with the vision of its founder, the late Prof. B. S. Pandit, to provide quality technical education to women. It was Karnataka's first engineering college exclusively for women.</p>
+          <p class="lead">This portal is a student-built prototype for the ECE department, made for HackNext'26 (PS06, Smart Education).</p>
+        </div>
+        <div class="facts">
+          <dl>
+            <div><dt>Established</dt><dd>2003</dd></div>
+            <div><dt>Affiliation</dt><dd>Visvesvaraya Technological University, Belagavi</dd></div>
+            <div><dt>Approval</dt><dd>AICTE, New Delhi</dd></div>
+            <div><dt>Accreditation</dt><dd>NAAC accredited; ECE, CSE and ISE accredited by NBA</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="features" style="padding-top:0">
+      <div class="wrap">
+        <h2>What the portal does</h2>
+        <p class="lead">Four features, one login for each role.</p>
+        <div class="features">
+          <div class="feature"><h3>Attendance alerts</h3><p>Students see exactly how many classes they must attend to stay eligible for exams, not just a percentage.</p></div>
+          <div class="feature"><h3>Anonymous doubts</h3><p>Students flag the topic they didn't understand. Faculty see the count per topic, never the name.</p></div>
+          <div class="feature"><h3>Private counseling</h3><p>A direct, private line between a student and her counselor, with replies in the same place.</p></div>
+          <div class="feature"><h3>NAAC/NBA report</h3><p>Faculty records, re-teaching and attendance monitoring become a printable evidence report.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="install" style="padding-top:0">
+      <div class="wrap">
+        <h2>Install it as an app</h2>
+        <p class="lead">No download file needed. Use the blue <b>Install app</b> button at the bottom-right of this page, or follow the steps for your device. The app gets its own icon, opens in its own window and works offline.</p>
+        <div class="install-grid">
+          <div class="feature"><h3>Windows / Mac / Linux</h3>
+            <ol><li>Open this page in <b>Chrome</b> or <b>Edge</b>.</li><li>Click <b>Install app</b> (bottom-right), then <b>Install</b>.</li><li>Find the icon on your desktop or Start menu.</li></ol>
+            <p style="margin:12px 0 0"><a id="dl-win" class="btn blue" href="#" style="display:none">Download for Windows (.zip)</a></p>
+            <p id="dl-help" style="margin:8px 0 0;font-size:13px;color:var(--muted);display:none">Or: download, unzip, double-click <b>Install-Windows.bat</b> (works without internet). If Windows warns, click <b>More info</b> then <b>Run anyway</b>.</p></div>
+          <div class="feature"><h3>Android phone</h3>
+            <ol><li>Open this page in <b>Chrome</b>.</li><li>Tap <b>Install app</b>, then <b>Install</b>.</li><li>The icon appears on your home screen.</li></ol></div>
+          <div class="feature"><h3>iPhone / iPad</h3>
+            <ol><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button.</li><li>Choose <b>Add to Home Screen</b>.</li></ol></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block portal" id="portal">
+      <div class="wrap">
+        <h2>Log in to the portal</h2>
+        <p class="lead">Use the login given by your department.</p>
+        <div class="choices">
+          <div class="choice">
+            <h3>Student</h3>
+            <p>Attendance status, events, anonymous doubts and messages to your counselor.</p>
+            <a class="btn blue" href="login.html?role=student">Continue as student</a>
+          </div>
+          <div class="choice">
+            <h3>Faculty</h3>
+            <p>Mark attendance, see doubt counts, answer counseling messages, post announcements and generate reports.</p>
+            <a class="btn blue" href="login.html?role=faculty">Continue as faculty</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>GSSS Institute of Engineering &amp; Technology for Women</strong><br>
+        K.R.S. Road, Metagalli, Mysuru - 570016, Karnataka<br>
+        <a href="https://gsssietw.ac.in/" target="_blank" rel="noopener">gsssietw.ac.in</a>
+      </div>
+      <div>Smart Education Portal prototype<br>HackNext'26, PS06 Smart Education<br>Team King of the Hunter</div>
+    </div>
+  </footer>
+<script>
+(function(){ // build the GitHub "Download ZIP" link automatically when hosted on GitHub Pages
+  var h=location.hostname, m=location.pathname.split("/")[1];
+  if(/\.github\.io$/.test(h) && m){
+    var a=document.getElementById("dl-win");
+    a.href="https://github.com/"+h.split(".")[0]+"/"+m+"/archive/refs/heads/main.zip";
+    a.style.display=""; document.getElementById("dl-help").style.display="";
+  }
+})();
+</script>
+<script src="js/pwa.js"></script>
+</body>
+</html>
